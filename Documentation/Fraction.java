@@ -1,3 +1,5 @@
+//This is only the fraction class
+//The tester with the main() is a separate file
 public class Fraction {
 	private int numerator;		//instant varialbles declared
 	private int denominator;	//numerator and denominator
