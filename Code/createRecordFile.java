@@ -27,8 +27,10 @@ public class createRecordFile {
 		}
 	}
 
+	//public void updateRecords(int studentID, String fn, String ln, int courseID) {
 	public void updateRecords() {
 		if ((Networking_Fundamentals) && (counterNF <= 30)) {
+			//fillStudentRecord.printf("%i%s%s%i", studentID, fn, ln + courseID);
 			fillStudentRecord.printf("%s%s%s%s", "Charlie,", "Brown,", "sss-ss-ssss,", "12345" + "\n");
 			counterNF += counterNF;
 			//Need to call Course.txt and read its current 'Number Enrolled' before the above 'if'

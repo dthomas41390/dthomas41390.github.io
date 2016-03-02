@@ -16,6 +16,7 @@ public class Main {
 		studentFile.closeFile();
 
 		// read the above student record registration
+		System.out.println();
 		readRecordFile studentRecord = new readRecordFile();
 		studentRecord.readStudentFile();
     }
