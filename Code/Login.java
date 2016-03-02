@@ -19,7 +19,7 @@ public class Login {
             scannerRead = new Scanner(file);
             scannerRead.useDelimiter(",");
 
-
+            //Stores the names and passwords from the .txt file into a name and password ArrayList
             while (scannerRead.hasNext()) {
                 name = scannerRead.next();
                 password = scannerRead.next();
@@ -31,7 +31,7 @@ public class Login {
             System.out.println("File Not Found");
         }
 
-
+        //Compares user input to the contents of the name and password ArrayLists
         for (int i = 0; i < 3; i++) {
             System.out.println("Please enter your name: ");
             nameInput = scannerInput.next();
