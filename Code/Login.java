@@ -26,8 +26,6 @@ public class Login {
                 nameArrayList.add(name);
                 passwordArrayList.add(password);
             }
-            
-            scannerRead.close();
 
         } catch (FileNotFoundException e) {
             System.out.println("File Not Found");
