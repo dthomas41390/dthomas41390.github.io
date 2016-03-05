@@ -192,7 +192,35 @@ public class Application {
     */
     private boolean unRegisterCourse(String courseID)
     {
-        //stub
+        Course selectedCourse = null;
+        //Get Course based on courseID
+        for (int ii = 0; ii < this.courseList.size(); ii++)
+        {
+            if (this.courseList.get(ii).getCourseID().equals(courseID))
+            {
+                selectedCourse = this.courseList.get(ii);
+                break; //break for loop
+            }
+        }
+        
+        if (selectedCourse == null)
+        {
+            //If execution gets to this point, that means a courseID was not matched with a course in this.courseList. Return false
+            //because the courseID is not recognized by the system.
+            return false;
+        }
+        
+        //Call removeCourse() from Account class and return success or failure.        
+        boolean isSuccess = this.activeUser.removeCourse(selectedCourse);
+        
+        if (isSuccess)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     
     /*
