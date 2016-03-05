@@ -102,15 +102,21 @@ public class Account extends Person {
    */
     public boolean removeCourse(Course course)
     {
-        return true; //stub
-                
-        // //Remove course from registeredCourses
-        // this.registeredCourses.remove(course);
-        // //Decrement Enrollment
-        // course.decrementEnrollment();
-        // //Update databases
-        // updateAccountRecord(remove,course);
-        // updateCoursesRecord(course);
+        if (!this.registeredCourses.contains(course)) // if Account is not registered to class, return false.
+        {
+            return false;
+        }
+        
+        //Remove course from registeredCourses
+        this.registeredCourses.remove(course);
+        //Decrement Enrollment
+        course.decrementEnrollment();
+        //Update databases
+        updateAccountRecord(remove,course);
+        updateCoursesRecord(course);
+        
+        return true;
+
     }
     
     /*
