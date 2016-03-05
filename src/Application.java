@@ -12,6 +12,7 @@ public class Application {
     private ArrayList<Account> accountList = new ArrayList<Account>();
     Account activeUser;
     private Scanner scanner;
+    private Scanner lineScanner;
     
     /*
     This main Constructor acts as an "initialization" of the entire application. It will initialize the data by calling the
@@ -39,6 +40,7 @@ public class Application {
     represents a Course object. This method will read in each line and create a new Course object. The new Course object will  
     be added to this.courseList.
     -If the Courses.txt database does not exist, this method will terminate the program.
+    -After this.courseList has been populated, sort the Courses so that it is in alphabetical order.
     -ASSIGNEE: Sam
     */
     private void loadCoursesData()
@@ -54,7 +56,82 @@ public class Application {
     */
     private void loadAccountsData()
     {
-        //stub
+        //Check to see if AccountRecords.txt exists. If it doesn't, create it.
+        File accountsFile = new File("AccountRecords.txt");
+        if (accountsFile.exists() == false)
+        {
+            //Create the file
+            try
+            {
+                PrintWriter pw = new PrintWriter("AccountRecords.txt","UTF-8");
+                pw.close();
+            }
+            catch (IOException e)
+            {
+                System.out.println("Exception!");
+            }
+        }
+        else //load in the data from AccountRecords.txt
+        {
+            try
+            {
+                scanner = new Scanner(accountsFile);
+                while (scanner.hasNext())
+                {
+                        
+                    ArrayList<String> tempAccountArrayList = new ArrayList<String>();
+                    ArrayList<String> tempCourseIDArrayList = new ArrayList<String>();
+                    ArrayList<Course> tempCourseArrayList = new ArrayList<Course>();
+                        
+                    
+                    //Read in a line.
+                    lineScanner = new Scanner(scanner.nextLine());
+                    lineScanner.useDelimiter(",");
+                    //Read in firstName, lastName, age, gender, ssn, username, password, studentID
+                    for (int ii = 0; ii < 8; ii++)
+                    {
+                        tempAccountArrayList.add(lineScanner.next());
+                    }
+                    //Read in the registered coursesIDs.
+                    while (lineScanner.hasNext())
+                    {
+                        tempCourseIDArrayList.add(lineScanner.next());
+                    }
+                    
+                    //Populate tempCourseArrayList based on tempCourseIDArrayList
+                    for (int ii = 0; ii < tempCourseIDArrayList.size(); ii++)
+                    {
+                        for (int jj = 0; jj < this.courseList.size(); jj++)
+                        {
+                            if (this.courseList.get(jj).getCourseID().equals(tempCourseIDArrayList.get(ii)))
+                            {
+                                tempCourseArrayList.add(this.courseList.get(jj));
+                                break; //break out of the inner-loop and continue outer-loop
+                            }
+                        }
+                    }
+                    
+                    //Create the Account object and add to this.accountList
+                    this.accountList.add(new Account(tempAccountArrayList.get(0),
+                                                     tempAccountArrayList.get(1),
+                                                     Integer.parseInt(tempAccountArrayList.get(2)),
+                                                     tempAccountArrayList.get(3),
+                                                     tempAccountArrayList.get(4),
+                                                     tempAccountArrayList.get(5),
+                                                     tempAccountArrayList.get(6),
+                                                     tempAccountArrayList.get(7)));
+                    this.accountList.get(this.accountList.size() - 1).setRegisteredCourses(tempCourseArrayList);
+                    lineScanner.close();
+                }
+                scanner.close();
+                
+            }
+            catch (IOException e)
+            {
+                System.out.println("Exception!");
+            }
+            
+        }
     }
     
     
@@ -97,11 +174,13 @@ public class Application {
     activeUser.addCourse() method.
     -The addCourse() method will return true if the registration is successful and false if it is not.
     -This method will return the same true/false value.
-    -ASSIGNEE: Noe and John
+    -ASSIGNEE: John
     */
     private boolean registerCourse(String courseID)
     {
-        //stub
+        //identify the Course from this.courseList
+        
+        
     }
     
     /*
@@ -109,7 +188,7 @@ public class Application {
     activeUser.removeCourse() method.
     -The removeCourse() method will return true if the registration is successful and false if it is not.
     -This method will return the same /true/false value.
-    -ASSIGNEE: Noe and John
+    -ASSIGNEE: Noe
     */
     private boolean unRegisterCourse(String courseID)
     {

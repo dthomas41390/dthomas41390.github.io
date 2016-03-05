@@ -1,4 +1,4 @@
-import java.util.ArrayList
+import java.util.ArrayList;
 
 public class Account extends Person {
     
@@ -41,6 +41,11 @@ public class Account extends Person {
         this.password = password;
     }
     
+    public void setRegisteredCourses(ArrayList<Course> registeredCourses)
+    {
+        this.registeredCourses = registeredCourses;
+    }
+    
     /*
     *********************************
     Getter Methods
@@ -78,11 +83,11 @@ public class Account extends Person {
         -Then call this.updateAccountRecord() to update AccountRecords.txt with the new Course.
         -Then call this.updateCoursesRecord() to update Courses.txt with the "numEnrolled" Update.
             -Return true.
-    -ASSIGNEE: Noe and John
+    -ASSIGNEE: John
    */
     public boolean addCourse(Course course)
     {
-        //stub
+        return true; //stub
     }
     
    /* 
@@ -93,18 +98,19 @@ public class Account extends Person {
         -Then call this.updateAccountRecord() to update AccountRecords.txt with the removal of the Course.
         -Then call this.updateCoursesRecord() to update Courses.txt with the "numEnrolled" update.
             -Return true.
-    -ASSIGNEE: Noe and John
+    -ASSIGNEE: Noe
    */
-    public void removeCourse(Course course)
+    public boolean removeCourse(Course course)
     {
+        return true; //stub
                 
-        //Remove course from registeredCourses
-        this.registeredCourses.remove(course);
-        //Decrement Enrollment
-        course.decrementEnrollment();
-        //Update databases
-        updateAccountRecord(remove,course);
-        updateCoursesRecord(course);
+        // //Remove course from registeredCourses
+        // this.registeredCourses.remove(course);
+        // //Decrement Enrollment
+        // course.decrementEnrollment();
+        // //Update databases
+        // updateAccountRecord(remove,course);
+        // updateCoursesRecord(course);
     }
     
     /*
@@ -116,7 +122,7 @@ public class Account extends Person {
 
     /*
     -This private utility method will update the AccountRecords.txt file with the addition or removal of a Course for this Account.
-    -ASSIGNEE: Noe and John
+    -ASSIGNEE: John
     */
     private void updateAccountRecord(String cmd, Course course)
     {
@@ -132,7 +138,7 @@ public class Account extends Person {
     
     /*
     -This private utility method will update the Courses.txt file with the "numEnrolled" update due to an addition or removal of a registered Course.
-    -ASSIGNEE: Noe and John
+    -ASSIGNEE: Noe
     */
     private void updateCoursesRecord(Course course)
     {

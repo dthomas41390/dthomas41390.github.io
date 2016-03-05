@@ -106,7 +106,7 @@ public class Person implements Comparable<Person> {
                         + "Last Name= " + getLastName() + "\n"
                         + "Age= " + getAge() + "\n"
                         + "Gender= " + getGender() + "\n" 
-                        + "SSN= " + getSocialSecurityNumber();
+                        + "SSN= " + getSocialSecurityNumber() + "\n";
                         
         return result;
     }
