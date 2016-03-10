@@ -10,7 +10,7 @@ public class Application {
     //Private Instance Variables
     private ArrayList<Course> courseList = new ArrayList<Course>();
     private ArrayList<Account> accountList = new ArrayList<Account>();
-    Account activeUser;
+    private Account activeUser;
     private Scanner scanner;
     private Scanner lineScanner;
     

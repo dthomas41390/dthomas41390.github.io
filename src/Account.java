@@ -1,12 +1,20 @@
 import java.util.ArrayList;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.BufferedWriter;
+import java.util.Scanner;
+import java.lang.*;
+import java.io.IOException;
+import java.util.Properties;
 
-public class Account extends Person {
+import java.io.IOException;public class Account extends Person {
     
     //Private Instance Variables
     private String userName;
     private String password;
     private String id;
-    ArrayList<Course> registeredCourses = new ArrayList<Course>();
+    private ArrayList<Course> registeredCourses = new ArrayList<Course>();
     
     //Main Constructor
     public Account(String firstName,
@@ -112,7 +120,7 @@ public class Account extends Person {
         //Decrement Enrollment
         course.decrementEnrollment();
         //Update databases
-        updateAccountRecord(remove,course);
+        updateAccountRecord(course);
         updateCoursesRecord(course);
         
         return true;
@@ -149,7 +157,108 @@ public class Account extends Person {
     private void updateCoursesRecord(Course course)
     {
         //re-print this course record in Courses.txt. The numEnrolled value will be updated.
-    }
+        
+        //Open the current Courses.txt.
+        File originalFile = new File("Courses.txt");
+        try
+        {
+            origFileScanner = new Scanner(originalFile,"UTF-8");
+            delimiter = "\",\"";
+            delimiterLength = delimiter.length();
+            origFileScanner.useDelimiter(delimiter);
+        }
+        catch (IOException e)
+        {
+            System.out.println("File Not Found.");
+        }
+        
+        //Create a new temp file that will be later renamed to Courses.txt.
+        File tempFile = new File("tempfile.txt");
+        try
+        {
+            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), "UTF-8"));
+        }
+        catch (IOException e)
+        {
+            System.out.println("File Not Found."); //this doesn't make sense????
+        }
+                
+        String line = null;
+        while (origFileScanner.hasNext())
+        {
+            line = origFileScanner.nextLine();
+            
+            if (line.contains(course.getCourseID())) //course.getCourseID()
+            {
+                //Get index of delimiters.
+                ArrayList<Integer> indexArrayList = new ArrayList<Integer>();
+                
+                for (int ii=0; ii < 6; ii++)//Count over to numEnrolled Value
+                {
+                    if (ii == 0) //first iteration of loop
+                    {
+                        indexArrayList.add(line.indexOf(delimiter));
+                    }
+                    else
+                    {
+                        indexArrayList.add(line.indexOf(delimiter,indexArrayList.get(indexArrayList.size()-1)+delimiterLength));
+                    }
+                }
+                
+                //Construct First Part of New String
+                String firstPart = line.substring(0,indexArrayList.get(indexArrayList.size()-2));
+                
+                //Construct Last Part of New String
+                String lastPart = line.substring(indexArrayList.get(indexArrayList.size()-1),line.length());
+                
+                //Construct string for value that is being updated.
+                String updatedValue = "\",\"" + course.getNumEnrolled(); //course.getNumEnrolled()
+                
+                //Construct final string
+                String result = firstPart + updatedValue + lastPart;
+                
+                //Print result to tempFile
+                try
+                {
+                    out.write(result + "\r\n");
+                    out.flush();
+                }
+                catch (IOException e)
+                {
+                    System.out.println("Exception");
+                }
+                
+                
+            }
+            else //Print unmodified data to tempFile
+            {
+                try
+                {
+                    out.write(line + "\r\n");
+                    out.flush();
+                }
+                catch (IOException e)
+                {
+                    System.out.println("Exception");
+                }
+            }
+        }
+        
+        try
+        {
+            out.close();
+        }
+        catch (IOException e)
+        {
+            System.out.println("Exception");
+        }
+        
+        //Delete originalFile
+        originalFile.delete();
+        
+        //Rename tempFile to originalFile
+        tempFile.renameTo(originalFile);
+        
     
     
     
