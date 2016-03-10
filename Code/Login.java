@@ -2,52 +2,117 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.ArrayList;
-
+import java.io.PrintWriter;
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 public class Login {
 
     public static void main(String[] args) {
         File file;
-        Scanner scannerRead, scannerInput;
-        String name, password, nameInput, passwordInput;
-        ArrayList<String> nameArrayList = new ArrayList<String>();
+        Scanner scannerRead, loginUser, displayLoginScreen;
+        String userName, password, userNameInput, passwordInput, fName, lName, age, gender, ssn;
+        ArrayList<String> userNameArrayList = new ArrayList<String>();
         ArrayList<String> passwordArrayList = new ArrayList<String>();
-        scannerInput = new Scanner(System.in);
+        ArrayList<String> fNameArrayList = new ArrayList<String>();
+        ArrayList<String> lNameArrayList = new ArrayList<String>();
+        ArrayList<String> ageArrayList = new ArrayList<String>();
+        ArrayList<String> genderArrayList = new ArrayList<String>();
+        ArrayList<String> ssnArrayList = new ArrayList<String>();
+        loginUser = new Scanner(System.in);
+        displayLoginScreen = new Scanner(System.in);
 
-        try {
-            file = new File("Place Location of NameAndPassword.txt here");
-            scannerRead = new Scanner(file);
-            scannerRead.useDelimiter(",");
+		//Opening statement
+		System.out.println("Existing User? (Y/N)");
+		String f = displayLoginScreen.next();
+	if (f.equals ("Y")){
 
-            //Stores the names and passwords from the .txt file into a name and password ArrayList
-            while (scannerRead.hasNext()) {
-                name = scannerRead.next();
-                password = scannerRead.next();
-                nameArrayList.add(name);
-                passwordArrayList.add(password);
-            }
-            
-            scannerRead.close();
-            
-        } catch (FileNotFoundException e) {
-            System.out.println("File Not Found");
-        }
+        	try {
+            	file = new File("AccountRecords.txt");
+            	scannerRead = new Scanner(file);
+            	scannerRead.useDelimiter(",");
 
-        //Compares user input to the contents of the name and password ArrayLists
-        for (int i = 0; i < 3; i++) {
-            System.out.println("Please enter your name: ");
-            nameInput = scannerInput.next();
-            System.out.println("Please enter your password: ");
-            passwordInput = scannerInput.next();
-            if (nameArrayList.contains(nameInput) && passwordArrayList.contains(passwordInput)) {
-                System.out.println("Login Successful");
-                break;
-            } else {
-                System.out.println("Name and Password do not match, please try again" + "\n");
-            }
+            	//Stores the names and passwords from the .txt file into a name and password ArrayList
+            	while (scannerRead.hasNext()) {
+                	userName = scannerRead.next();
+                	password = scannerRead.next();
+                	fName = scannerRead.next();
+                	lName = scannerRead.next();
+                	age = scannerRead.next();
+                	gender = scannerRead.next();
+                	ssn = scannerRead.next();
+                	userNameArrayList.add(userName);
+                	passwordArrayList.add(password);
+                	fNameArrayList.add(fName);
+                	lNameArrayList.add(lName);
+                	ageArrayList.add(age);
+                	genderArrayList.add(gender);
+                	ssnArrayList.add(ssn);
+            	}
 
-        }
+            	scannerRead.close();
 
-    }
+        	} catch (FileNotFoundException e) {
+        	    System.out.println("File Not Found");
+        	}
 
+        	//Option 1. Compares user input to the contents of the username and password ArrayLists
+        	for (int i = 0; i < 3; i++) {
+        	    System.out.println("Please enter your Username: ");
+        	    userNameInput = loginUser.next();
+        	    System.out.println("Please enter your Password: ");
+        	    passwordInput = loginUser.next();
+        	    if (userNameArrayList.contains(userNameInput) && passwordArrayList.contains(passwordInput)) {
+        	        System.out.println("Login Successful");
+        	        break;
+        	    } else {
+        	        System.out.println("Name and Password do not match, please try again" + "\n");
+        	    }
+
+        	}
+
+
+	} //Options if "N" is selected for "Existing user Y/N"
+	else if (f.equals ("N")){
+	//Option 2. New user: Stores each string with a "," and creates a new line
+	System.out.println("Create new user");
+
+	   try {
+		System.out.println("Username: ");
+		BufferedReader outbr = new BufferedReader(new InputStreamReader(System.in));
+		String userNameOut = outbr.readLine();
+		System.out.println("Password: ");
+		String passwordOut = outbr.readLine();
+		System.out.println("First Name: ");
+		String fnameOut = outbr.readLine();
+		System.out.println("Last name: ");
+		String lnameOut = outbr.readLine();
+		System.out.println("Age: ");
+		String ageOut = outbr.readLine();
+		System.out.println("Gender (M/F): ");
+		String genderOut = outbr.readLine();
+		System.out.println("Social Security Number or (N/A): ");
+		String ssnOut = outbr.readLine();
+
+		PrintWriter createAccount = new PrintWriter(new FileWriter ("AccountRecords.txt", true));
+
+		for (int i = 0; i < 1; i++) {
+				createAccount.write(userNameOut + "," + passwordOut + "," + fnameOut + "," + lnameOut + "," + ageOut + "," + genderOut + "," + ssnOut + "\n");
+	}
+
+		createAccount.close();
+   }
+   	   catch (IOException e) {
+	System.out.println("Error during reading/writing");
+	}
+
+	}
+	//Option 3. Invalid starting input
+	else{
+	System.out.println("Not a valid entry");
+	}
+
+ }
 }
