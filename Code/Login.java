@@ -13,8 +13,8 @@ public class Login {
     public static void main(String[] args) {
         File file;
         Scanner scannerRead, loginUser, displayLoginScreen;
-        String userName, password, userNameInput, passwordInput, fName, lName, age, gender, ssn;
-        ArrayList<String> userNameArrayList = new ArrayList<String>();
+        String username, password, usernameInput, passwordInput, fName, lName, age, gender, ssn;
+        ArrayList<String> usernameArrayList = new ArrayList<String>();
         ArrayList<String> passwordArrayList = new ArrayList<String>();
         ArrayList<String> fNameArrayList = new ArrayList<String>();
         ArrayList<String> lNameArrayList = new ArrayList<String>();
@@ -23,6 +23,8 @@ public class Login {
         ArrayList<String> ssnArrayList = new ArrayList<String>();
         loginUser = new Scanner(System.in);
         displayLoginScreen = new Scanner(System.in);
+        String storage[] = new String [50];
+
 
 		//Opening statement
 		System.out.println("Existing User? (Y/N)");
@@ -33,17 +35,20 @@ public class Login {
             	file = new File("AccountRecords.txt");
             	scannerRead = new Scanner(file);
             	scannerRead.useDelimiter(",");
+				for(int i=0; i<storage.length &&  scannerRead.hasNext(); i++) {
+				storage[i]=scannerRead.nextLine();
+					}
 
             	//Stores the names and passwords from the .txt file into a name and password ArrayList
             	while (scannerRead.hasNext()) {
-                	userName = scannerRead.next();
+                	username = scannerRead.next();
                 	password = scannerRead.next();
                 	fName = scannerRead.next();
                 	lName = scannerRead.next();
                 	age = scannerRead.next();
                 	gender = scannerRead.next();
                 	ssn = scannerRead.next();
-                	userNameArrayList.add(userName);
+                	usernameArrayList.add(username);
                 	passwordArrayList.add(password);
                 	fNameArrayList.add(fName);
                 	lNameArrayList.add(lName);
@@ -51,8 +56,8 @@ public class Login {
                 	genderArrayList.add(gender);
                 	ssnArrayList.add(ssn);
             	}
-
-            	scannerRead.close();
+				loginUser = new Scanner(System.in);
+        	    scannerRead.close();
 
         	} catch (FileNotFoundException e) {
         	    System.out.println("File Not Found");
@@ -61,16 +66,15 @@ public class Login {
         	//Option 1. Compares user input to the contents of the username and password ArrayLists
         	for (int i = 0; i < 3; i++) {
         	    System.out.println("Please enter your Username: ");
-        	    userNameInput = loginUser.next();
+        	    usernameInput = loginUser.next();
         	    System.out.println("Please enter your Password: ");
         	    passwordInput = loginUser.next();
-        	    if (userNameArrayList.contains(userNameInput) && passwordArrayList.contains(passwordInput)) {
+        	    if (usernameArrayList.contains(usernameInput) && passwordArrayList.contains(passwordInput)) {
         	        System.out.println("Login Successful");
         	        break;
         	    } else {
         	        System.out.println("Name and Password do not match, please try again" + "\n");
         	    }
-
         	}
 
 
@@ -87,7 +91,7 @@ public class Login {
 		String passwordOut = outbr.readLine();
 		System.out.println("First Name: ");
 		String fnameOut = outbr.readLine();
-		System.out.println("Last name: ");
+		System.out.println("Last Name: ");
 		String lnameOut = outbr.readLine();
 		System.out.println("Age: ");
 		String ageOut = outbr.readLine();
