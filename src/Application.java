@@ -14,6 +14,8 @@ public class Application {
     private Scanner scanner;
     private Scanner lineScanner;
 
+    Scanner sc=new Scanner(System.in);
+
     /*
     This main Constructor acts as an "initialization" of the entire application. It will initialize the data by calling the
     loadCoursesData() and loadAccountsData() methods, and printout out the Login Screen.
@@ -280,12 +282,26 @@ public class Application {
     */
     private void displayCourseRegistrationScreen()
     {
-        //stub
-    }
+		System.out.println("\n");
+
+		for(Course course: courseList) {
+			System.out.println(course.getCourseName() + " " + course.getCourseID() + "      " + course.getStartDate() + "    " +
+							   course.getEndDate() + "  " + course.getEnrollmentLimit() +  "        " + course.getNumEnrolled());
+		}
+
+		System.out.print("\n\nSELECT THE COURSE  [please, enter Course ID [12345] for testing] ");
+		int courseID = sc.nextInt();
+			System.out.print("\033[H\033[2J");
+			System.out.flush();
+
+		//return true, registration was successful. Otherwise, return false.
+		boolean registeringCourse = registerCourse(courseID);
+		displayCourseRegistrationStatusScreen(registeringCourse);
+	}
 
     /*
-    -This private utility method will display the "Course Registration Status" screen which informs the user if a registration or
-    unregistration is successful or if it failed.
+    -This private utility method will display the "Course Registration Status" screen which informs the user if a registration is
+    successful or if it failed.
     -After the message is displayed to the user, the user must "Enter any Key" to confirm. Then the user is displayed with navigation options.
         -1 Course Registration
         -2 Profile
@@ -295,10 +311,124 @@ public class Application {
     -If the user selects "3" then display the Login Screen.
     -ASSIGNEE: Alberto
     */
-    private void displayCourseRegistrationStatusScreen()
+    private void displayCourseRegistrationStatusScreen(boolean registeringCourse)
     {
-        //stub
+		if (registeringCourse) {
+			System.out.println("\n\n");
+			System.out.println("       --------------------------------         ");
+			System.out.println("   *** YOUR REGISTRATION WAS SUCCESSFUL   ***   ");
+		    System.out.println("       --------------------------------         ");
+		}
+		else {
+			System.out.println("\n\n");
+		    System.out.println("       ------------------------------------         ");
+		    System.out.println("   *** YOUR REGISTRATION WAS NOT SUCCESSFUL   ***   ");
+		    System.out.println("       ------------------------------------         ");
+		}
+
+			System.out.println("\n\n");
+			System.out.println("       1 Course Registration");
+			System.out.println("       2 Profile");
+			System.out.println("       3 Logout\n\n");
+			System.out.print("Enter Your Option (1, 2, 3): ");
+
+			boolean validCommand = false;
+			String userInput = "";
+
+			while (validCommand == false)
+			{
+				userInput = sc.next();
+				if (userInput.equals("1") || userInput.equals("2") || userInput.equals("3"))
+					{ validCommand = true; }
+				else
+					{ System.out.print("Invalid Option, please try again: "); }
+			}
+
+			int userIn = Integer.valueOf((String) userInput);
+
+			if (userIn == 1) {
+				System.out.print("\033[H\033[2J");
+				System.out.flush();
+			 	displayCourseRegistrationScreen();
+			}
+
+			if (userIn == 2) {
+				System.out.print("\033[H\033[2J");
+				System.out.flush();
+				displayProfileScreen();
+			}
+
+			if (userIn == 3) {
+				System.out.print("\033[H\033[2J");
+				System.out.flush();
+				loginUser();
+		 	}
     }
+
+    /*
+    -This private utility method will display the "Course UnRegistration Status" screen which informs the user if an unregistration is
+    successful or if it failed.
+    -After the message is displayed to the user, the user must "Enter any Key" to confirm. Then the user is displayed with navigation options.
+        -1 Course Registration
+        -2 Profile
+        -3 Logout
+    -If the user selects "1" then display the Course Registration Screen.
+    -If the user selects "2" then display the Profile Screen.
+    -If the user selects "3" then display the Login Screen.
+    -ASSIGNEE: Alberto
+    */
+	private void displayCourseUnRegistrationStatusScreen(boolean unRegisteringCourse){
+		if (registeringCourse) {
+			System.out.println("\n\n");
+			System.out.println("       -----------------------------------         ");
+			System.out.println("   *** YOUR UN-REGISTRATION WAS SUCCESSFUL   ***   ");
+			System.out.println("       -----------------------------------         ");
+		}
+		else {
+			System.out.println("\n\n");
+			System.out.println("       ------------------------------------         ");
+			System.out.println("   *** YOUR UN-REGISTRATION WAS NOT SUCCESSFUL   ***   ");
+			System.out.println("       ------------------------------------         ");
+		}
+
+			System.out.println("\n\n");
+		 	System.out.println("       1 Course Registration");
+		 	System.out.println("       2 Profile");
+		 	System.out.println("       3 Logout\n\n");
+			System.out.print("Enter Your Option (1, 2, 3): ");
+
+			boolean validCommand = false;
+		 	String userInput = "";
+
+		while(validCommand == false)
+		{
+		 	userInput = sc.next();
+		 	if (userInput.equals("1") || userInput.equals("2") || userInput.equals("3"))
+			   { validCommand = true; }
+		 	else
+		 	   { System.out.print("Invalid Option, please try again: "); }
+		}
+
+		int userIn = Integer.valueOf((String) userInput);
+
+		if (userIn == 1) {
+			System.out.print("\033[H\033[2J");
+			System.out.flush();
+			displayCourseRegistrationScreen();
+		}
+
+		if (userIn == 2) {
+			System.out.print("\033[H\033[2J");
+			System.out.flush();
+			displayProfileScreen();
+		}
+
+		if (userIn == 3) {
+			System.out.print("\033[H\033[2J");
+			System.out.flush();
+			loginUser();
+		}
+	}
 
     /*
     -This private utility method will display the this.activeUser Profile Screen.
@@ -312,9 +442,65 @@ public class Application {
     */
     private void displayProfileScreen()
     {
-        //stub
+		System.out.println();
+		System.out.println("   STUDENT RECORD: ");
+		System.out.println("   --------------- ");
+		System.out.println(activeUser.toString());
+		System.out.println("   Student ID: " + activeUser.getId() + "\n");
+
+		ArrayList<Course> registeredCourses = activeUser.getRegisteredCourses();
+
+		System.out.println("   REGISTERED IN THE FOLLOWING COURSE(S):");
+		System.out.println("   --------------------------------------");
+
+		for(Course course: registeredCourses) {
+			System.out.println("   Course Name: " + course.getCourseName() + "    Course ID: " + course.getCourseID());
+			System.out.println("          Start Date: " + course.getStartDate() +
+							   "    End Date: " + course.getEndDate() + "    Capacity: " + course.getEnrollmentLimit() +
+							   "    Enrolled: " + course.getNumEnrolled());
+			System.out.println("         Description: " + course.getDescription() + "\n");
+		}
+			System.out.println();
+			System.out.println("       1 Course Registration");
+			System.out.println("       2 Course Un-Registration\n");
+			System.out.print("Enter Your Option (1, 2): ");
+
+		boolean validCommand = false;
+		String userInput = "";
+
+		while (validCommand == false)
+		{
+			userInput = sc.next();
+		 	if (userInput.equals("1") || userInput.equals("2"))
+		 		{ validCommand = true; }
+		 	else
+		 		{ System.out.print("Invalid Option, please try again: "); }
+		}
+
+		int userIn = Integer.valueOf((String) userInput);
+
+	 	if (userIn == 1) {
+			System.out.print("\033[H\033[2J");
+		 	System.out.flush();
+		 	displayCourseRegistrationScreen();
+		}
+
+		if (userIn == 2) {
+			System.out.print("\nENTER THE COURSE ID YOU WANT TO UN-REGISTER: ");
+		    int courseID = sc.nextInt();
+
+		 	System.out.print("\033[H\033[2J");
+		 	System.out.flush();
+
+			System.out.println();
+			System.out.println("   STUDENT RECORD: ");
+			System.out.println("   --------------- ");
+			System.out.println(activeUser.toString());
+			System.out.println("   Student ID: " + activeUser.getId() + "\n");
+
+		 	boolean unRegisteringCourse = unRegisterCourse(courseID);
+			displayCourseRegistrationStatusScreen(unRegisteringCourse);
+		}
     }
-
-
 
 }
