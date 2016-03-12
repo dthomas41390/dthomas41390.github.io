@@ -176,11 +176,25 @@ public class Application {
     -This method will return the same true/false value.
     -ASSIGNEE: John
     */
-    private boolean registerCourse(String courseID)
-    {
-        //identify the Course from this.courseList Hello my name is John
-
-
+    private boolean registerCourse(String courseID) {
+	        boolean isCourseInArrayList = false;
+	        for (Course courseIdentification : courseList) {
+	            if (courseIdentification.getCourseID().equals(courseID)) {
+	                isCourseInArrayList = true;
+	                break;
+	            }
+	        }
+	        if (isCourseInArrayList == false) {
+	            return isCourseInArrayList;
+	        }
+	        //get course from courselist
+	        Course theCourse = null;
+	        for (Course course : courseList) {
+	            if (course.getCourseID().equals(courseID)) {
+	                theCourse = course;
+	            }
+	        }
+	        return activeUser.addCourse(theCourse);
     }
 
     /*

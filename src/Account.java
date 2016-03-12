@@ -9,13 +9,13 @@ import java.io.IOException;
 import java.util.Properties;
 
 import java.io.IOException;public class Account extends Person {
-    
+
     //Private Instance Variables
     private String userName;
     private String password;
     private String id;
     private ArrayList<Course> registeredCourses = new ArrayList<Course>();
-    
+
     //Main Constructor
     public Account(String firstName,
                   String lastName,
@@ -30,60 +30,60 @@ import java.io.IOException;public class Account extends Person {
         this.userName = userName;
         this.password = password;
         this.id = id;
-                   
+
     }
-    
+
     /*
     *********************************
     Setter Methods
     *********************************
     */
-    
+
     public void setUserName(String userName)
     {
         this.userName = userName;
     }
-    
+
     public void setPassword(String password)
     {
         this.password = password;
     }
-    
+
     public void setRegisteredCourses(ArrayList<Course> registeredCourses)
     {
         this.registeredCourses = registeredCourses;
     }
-    
+
     /*
     *********************************
     Getter Methods
     *********************************
     */
-    
+
     public String getUserName()
     {
         return this.userName;
     }
-    
+
     public String getPassword()
     {
         return this.password;
     }
-    
+
     public ArrayList<Course> getRegisteredCourses()
     {
         return this.registeredCourses;
     }
-    
-    
+
+
     /*
     *********************************
     Class Methods
     *********************************
     */
-  
-    
-   /* 
+
+
+   /*
     -Attempts to add course to this.registeredCourses
         -Return false if course is duplicate or Course is at max Enrollment Limit.
         -If true, add course to this.registeredCourses
@@ -93,12 +93,18 @@ import java.io.IOException;public class Account extends Person {
             -Return true.
     -ASSIGNEE: John
    */
-    public boolean addCourse(Course course)
-    {
-        return true; //stub
+    public boolean addCourse (Course course) {
+	        if(this.registeredCourses.contains(course) || course.getNumEnrolled() == course.getEnrollmentLimit()) {
+	            return false;
+	        }
+	        this.registeredCourses.add(course);
+	        course.incrementEnrollment();
+	        updateAccountRecord();
+	        updateCoursesRecord(course);
+	        return true;
     }
-    
-   /* 
+
+   /*
     -Attempts to remove course from this.registeredCourses
         -Return false if user is not registered to Course
         -If true, remove Course from this.registeredCourses
@@ -114,7 +120,7 @@ import java.io.IOException;public class Account extends Person {
         {
             return false;
         }
-        
+
         //Remove course from registeredCourses
         this.registeredCourses.remove(course);
         //Decrement Enrollment
@@ -122,11 +128,11 @@ import java.io.IOException;public class Account extends Person {
         //Update databases
         updateAccountRecord(course);
         updateCoursesRecord(course);
-        
+
         return true;
 
     }
-    
+
     /*
     *********************************
     Private Utility Methods
@@ -138,18 +144,95 @@ import java.io.IOException;public class Account extends Person {
     -This private utility method will update the AccountRecords.txt file with the addition or removal of a Course for this Account.
     -ASSIGNEE: John
     */
-    private void updateAccountRecord(String cmd, Course course)
-    {
-        if (cmd.toUpperCase().equals("REMOVE"))
-        {
-            //Remove Registered Course in AccountRecord.txt for this Account
-        }
-        else if (cmd.toUpperCase().equals("ADD"))
-        {
-            //Add Registered Course in AccountRecord.txt for this Account
-        }
+    private void updateAccountRecord() {
+	        //re-print this course record in Courses.txt. The numEnrolled value will be updated.
+	        //Open the current Courses.txt.
+	        File originalFile = null;
+	        Scanner origFileScanner = null;
+	        BufferedWriter out = null;
+	        String delimiter = null;
+	        String line = null;
+	        int delimiterLength = 0;
+
+	        try {
+	            originalFile = new File("AccountRecords.txt");
+	            origFileScanner = new Scanner(originalFile, "UTF-8");
+	            delimiter = ",";
+	            delimiterLength = delimiter.length();
+	            origFileScanner.useDelimiter(delimiter);
+	        } catch (IOException e) {
+	            System.out.println("File Not Found.");
+	        }
+
+	        File tempAccountFile = new File("TempAccountRecords.txt");
+	        try {
+	            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempAccountFile), "UTF-8"));
+	        } catch (IOException e) {
+	            System.out.println("File Not Found.");
+	        }
+
+	        while(origFileScanner.hasNext()) {
+	            line = origFileScanner.nextLine();
+	            if(line.contains((this.id))) {
+	                //Get index of delimiters(",")
+	                ArrayList<Integer> indexArrayList = new ArrayList<Integer>();
+
+	                for (int i = 0; i < 8; i++)  //Count to studentID
+	                {
+	                    if (i == 0) //first iteration of loop
+	                    {
+	                        indexArrayList.add(line.indexOf(delimiter));
+
+	                    } else {
+
+	                        indexArrayList.add(line.indexOf(delimiter, indexArrayList.get(indexArrayList.size() - 1) + delimiterLength));
+	                    }
+	                }
+	                //Construct a part of the String before adding courseIDs to the String
+	                String origString = line.substring(0, indexArrayList.get(indexArrayList.size() - 1))+ delimiter;
+
+
+	                for (int i = 0; i < registeredCourses.size(); i++) {
+	                    origString += registeredCourses.get(i).getCourseID() + ",";
+	                }
+
+	                try {
+	                    out.write(origString + "\r\n");
+	                    out.flush();
+	                }
+
+	                catch (IOException e) {
+	                    System.out.println("Exception");
+	                }
+
+
+	            } else {
+	                try {
+	                    out.write(line + "\r\n");
+	                    out.flush();
+	                }
+	                catch (IOException e) {
+	                    System.out.println("Exception");
+	                }
+	            }
+	        }
+
+	        try {
+	            out.close();
+	            origFileScanner.close();
+	        }
+	        catch (IOException e) {
+	            System.out.println("Exception");
+	        }
+
+	        //Delete originalFile
+	        originalFile.delete();
+
+	        //Rename tempFile to originalFile
+	        tempAccountFile.renameTo(originalFile);
+
     }
-    
+
     /*
     -This private utility method will update the Courses.txt file with the "numEnrolled" update due to an addition or removal of a registered Course.
     -ASSIGNEE: Noe
@@ -157,7 +240,7 @@ import java.io.IOException;public class Account extends Person {
     private void updateCoursesRecord(Course course)
     {
         //re-print this course record in Courses.txt. The numEnrolled value will be updated.
-        
+
         //Open the current Courses.txt.
         File originalFile = new File("Courses.txt");
         try
@@ -171,7 +254,7 @@ import java.io.IOException;public class Account extends Person {
         {
             System.out.println("File Not Found.");
         }
-        
+
         //Create a new temp file that will be later renamed to Courses.txt.
         File tempFile = new File("tempfile.txt");
         try
@@ -182,17 +265,17 @@ import java.io.IOException;public class Account extends Person {
         {
             System.out.println("File Not Found."); //this doesn't make sense????
         }
-                
+
         String line = null;
         while (origFileScanner.hasNext())
         {
             line = origFileScanner.nextLine();
-            
+
             if (line.contains(course.getCourseID())) //course.getCourseID()
             {
                 //Get index of delimiters.
                 ArrayList<Integer> indexArrayList = new ArrayList<Integer>();
-                
+
                 for (int ii=0; ii < 6; ii++)//Count over to numEnrolled Value
                 {
                     if (ii == 0) //first iteration of loop
@@ -204,19 +287,19 @@ import java.io.IOException;public class Account extends Person {
                         indexArrayList.add(line.indexOf(delimiter,indexArrayList.get(indexArrayList.size()-1)+delimiterLength));
                     }
                 }
-                
+
                 //Construct First Part of New String
                 String firstPart = line.substring(0,indexArrayList.get(indexArrayList.size()-2));
-                
+
                 //Construct Last Part of New String
                 String lastPart = line.substring(indexArrayList.get(indexArrayList.size()-1),line.length());
-                
+
                 //Construct string for value that is being updated.
                 String updatedValue = "\",\"" + course.getNumEnrolled(); //course.getNumEnrolled()
-                
+
                 //Construct final string
                 String result = firstPart + updatedValue + lastPart;
-                
+
                 //Print result to tempFile
                 try
                 {
@@ -227,8 +310,8 @@ import java.io.IOException;public class Account extends Person {
                 {
                     System.out.println("Exception");
                 }
-                
-                
+
+
             }
             else //Print unmodified data to tempFile
             {
@@ -243,7 +326,7 @@ import java.io.IOException;public class Account extends Person {
                 }
             }
         }
-        
+
         try
         {
             out.close();
@@ -252,14 +335,14 @@ import java.io.IOException;public class Account extends Person {
         {
             System.out.println("Exception");
         }
-        
+
         //Delete originalFile
         originalFile.delete();
-        
+
         //Rename tempFile to originalFile
         tempFile.renameTo(originalFile);
-        
-    
-    
-    
+
+
+
+
 }
