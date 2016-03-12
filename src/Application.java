@@ -6,14 +6,14 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class Application {
-    
+
     //Private Instance Variables
     private ArrayList<Course> courseList = new ArrayList<Course>();
     private ArrayList<Account> accountList = new ArrayList<Account>();
     private Account activeUser;
     private Scanner scanner;
     private Scanner lineScanner;
-    
+
     /*
     This main Constructor acts as an "initialization" of the entire application. It will initialize the data by calling the
     loadCoursesData() and loadAccountsData() methods, and printout out the Login Screen.
@@ -23,21 +23,21 @@ public class Application {
         this.loadCoursesData();
         this.loadAccountsData();
         this.displayLoginScreen(); //Prints out the Login Screen for Logging In or Creating a New Account
-        
+
     }
-    
-    
+
+
     /*
     *********************************
     Private Utility Methods
     *********************************
     */
-    
-    
+
+
     /*
     -This private utility method is used to load the Course data from the Courses.txt database. The first line of Courses.txt contains
     the column header names. They can either be ignored or removed from the Courses.txt file. Each subsequent line in the Courses.txt file
-    represents a Course object. This method will read in each line and create a new Course object. The new Course object will  
+    represents a Course object. This method will read in each line and create a new Course object. The new Course object will
     be added to this.courseList.
     -If the Courses.txt database does not exist, this method will terminate the program.
     -After this.courseList has been populated, sort the Courses so that it is in alphabetical order.
@@ -47,7 +47,7 @@ public class Application {
     {
         //stub
     }
-    
+
     /*
     -This private utility method is used to load the Account data from AccountRecords.txt. If AccountRecords.txt does not already exist,
     it will be created. Each line in Account Records represents an Account object. This method will read in each line and create a
@@ -78,12 +78,12 @@ public class Application {
                 scanner = new Scanner(accountsFile);
                 while (scanner.hasNext())
                 {
-                        
+
                     ArrayList<String> tempAccountArrayList = new ArrayList<String>();
                     ArrayList<String> tempCourseIDArrayList = new ArrayList<String>();
                     ArrayList<Course> tempCourseArrayList = new ArrayList<Course>();
-                        
-                    
+
+
                     //Read in a line.
                     lineScanner = new Scanner(scanner.nextLine());
                     lineScanner.useDelimiter(",");
@@ -97,7 +97,7 @@ public class Application {
                     {
                         tempCourseIDArrayList.add(lineScanner.next());
                     }
-                    
+
                     //Populate tempCourseArrayList based on tempCourseIDArrayList
                     for (int ii = 0; ii < tempCourseIDArrayList.size(); ii++)
                     {
@@ -110,7 +110,7 @@ public class Application {
                             }
                         }
                     }
-                    
+
                     //Create the Account object and add to this.accountList
                     this.accountList.add(new Account(tempAccountArrayList.get(0),
                                                      tempAccountArrayList.get(1),
@@ -124,31 +124,31 @@ public class Application {
                     lineScanner.close();
                 }
                 scanner.close();
-                
+
             }
             catch (IOException e)
             {
                 System.out.println("Exception!");
             }
-            
+
         }
     }
-    
-    
+
+
     /*
     -This private utility method will be used when a user selects to create a new account at the login screen. This method will be
     executed AFTER all the data has been read in from the user.
     -The first step will be to validate that the studentID does not already exist.
-        -If the studentID already exists, an error will be presented to the user that the studentID already exists and will be taken back to the initial 
+        -If the studentID already exists, an error will be presented to the user that the studentID already exists and will be taken back to the initial
         login screen.
         -If the studentID does not already exist, a new Account will be created and added to this.accountList. Then this method
         will add the new Account will be added as a new entry to AccountRecords.txt.
     -ASSIGNEE: Dave
     */
-    private void createAccount(String firstName, 
-                               String lastName, 
-                               int age, 
-                               String gender, 
+    private void createAccount(String firstName,
+                               String lastName,
+                               int age,
+                               String gender,
                                String socialSecurityNumber,
                                String userName,
                                String password,
@@ -157,9 +157,9 @@ public class Application {
     {
         //Stub
     }
-    
+
     /*
-    -This private utility method will be called from the displayLoginScreen() method when a user attempts to login. The displayLoginScreen() method will read 
+    -This private utility method will be called from the displayLoginScreen() method when a user attempts to login. The displayLoginScreen() method will read
     in a userName and password and pass the values to this method. This method will validate that the userName and password pair is valid. if it is valid,
     it returns true, otherwise it returns false.
     -ASSIGNEE: Dave
@@ -168,7 +168,7 @@ public class Application {
     {
         //stub
     }
-    
+
     /*
     -This private utility method attempts to register a Course for the user. Based on the courseID provided, this method will call the
     activeUser.addCourse() method.
@@ -178,11 +178,11 @@ public class Application {
     */
     private boolean registerCourse(String courseID)
     {
-        //identify the Course from this.courseList
-        
-        
+        //identify the Course from this.courseList Hello my name is John
+
+
     }
-    
+
     /*
     -This private utility method attempts to unregister a Course for the user. Based on the courseID provided, this method will call the
     activeUser.removeCourse() method.
@@ -202,17 +202,17 @@ public class Application {
                 break; //break for loop
             }
         }
-        
+
         if (selectedCourse == null)
         {
             //If execution gets to this point, that means a courseID was not matched with a course in this.courseList. Return false
             //because the courseID is not recognized by the system.
             return false;
         }
-        
-        //Call removeCourse() from Account class and return success or failure.        
+
+        //Call removeCourse() from Account class and return success or failure.
         boolean isSuccess = this.activeUser.removeCourse(selectedCourse);
-        
+
         if (isSuccess)
         {
             return true;
@@ -222,9 +222,9 @@ public class Application {
             return false;
         }
     }
-    
+
     /*
-    -This private utility method displays the initial screen to the user. 
+    -This private utility method displays the initial screen to the user.
     -It may have a welcome message such as "Welcome to the Course Registration System"
     -It will prompt the user if he/she is an existing user.
         -If yes, the user will be prompted to enter userName and password, then this.loginUser() will be called.
@@ -243,7 +243,7 @@ public class Application {
     {
         //stub
     }
-    
+
     /*
     -This private utility method displays the "Create Account" screen after the user has prompted that they do not have an existing account.
     -This method will read in firstName, lastName, age, gender, socialSecurityNumber, userName, password, and studentID
@@ -254,7 +254,7 @@ public class Application {
     {
         //stub
     }
-    
+
     /*
     -This private utility method will display the "Course Registration" screen on successful login to the application and user selection.
     -This screen lists out all of the available courses from this.courseList.
@@ -268,9 +268,9 @@ public class Application {
     {
         //stub
     }
-    
+
     /*
-    -This private utility method will display the "Course Registration Status" screen which informs the user if a registration or 
+    -This private utility method will display the "Course Registration Status" screen which informs the user if a registration or
     unregistration is successful or if it failed.
     -After the message is displayed to the user, the user must "Enter any Key" to confirm. Then the user is displayed with navigation options.
         -1 Course Registration
@@ -285,7 +285,7 @@ public class Application {
     {
         //stub
     }
-    
+
     /*
     -This private utility method will display the this.activeUser Profile Screen.
     -This screen will display this.activeUser's data by calling this.activeUser.toString()
@@ -300,7 +300,7 @@ public class Application {
     {
         //stub
     }
-    
-    
-    
+
+
+
 }
