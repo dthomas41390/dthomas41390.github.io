@@ -76,11 +76,7 @@ public class Person implements Comparable<Person> {
     
     public String getSocialSecurityNumber()
     {
-        String firstDigits = this.socialSecurityNumber.substring(0,3);
-        String middleDigts = this.socialSecurityNumber.substring(3,5);
-        String lastDigits = this.socialSecurityNumber.substring(5,9);
-        String result = firstDigits + " - " + middleDigts + " - " + lastDigits;
-        return result;
+        return this.socialSecurityNumber;
     }
     
     public void talk()
@@ -102,11 +98,11 @@ public class Person implements Comparable<Person> {
     //Print out all private instance variable values
     public String toString()
     {
-        String result = "First Name= " + getFirstName() + "\n" 
-                        + "Last Name= " + getLastName() + "\n"
-                        + "Age= " + getAge() + "\n"
-                        + "Gender= " + getGender() + "\n" 
-                        + "SSN= " + getSocialSecurityNumber() + "\n";
+        String result = "First Name: " + getFirstName() + "\n" 
+                        + "Last Name: " + getLastName() + "\n"
+                        + "Age: " + getAge() + "\n"
+                        + "Gender: " + getGender() + "\n" 
+                        + "SSN: " + getSocialSecurityNumber() + "\n";
                         
         return result;
     }
