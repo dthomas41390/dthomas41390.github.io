@@ -7,8 +7,9 @@ import java.util.Scanner;
 import java.lang.*;
 import java.io.IOException;
 import java.util.Properties;
+import java.io.IOException;
 
-import java.io.IOException;public class Account extends Person {
+public class Account extends Person {
 
     //Private Instance Variables
     private String userName;
@@ -69,6 +70,11 @@ import java.io.IOException;public class Account extends Person {
     {
         return this.password;
     }
+    
+    public String getID()
+    {
+        return this.id;
+    }
 
     public ArrayList<Course> getRegisteredCourses()
     {
@@ -99,8 +105,8 @@ import java.io.IOException;public class Account extends Person {
 	        }
 	        this.registeredCourses.add(course);
 	        course.incrementEnrollment();
-	        updateAccountRecord();
-	        updateCoursesRecord(course);
+	        this.updateAccountRecord();
+	        this.updateCoursesRecord(course);
 	        return true;
     }
 
@@ -126,7 +132,7 @@ import java.io.IOException;public class Account extends Person {
         //Decrement Enrollment
         course.decrementEnrollment();
         //Update databases
-        updateAccountRecord(course);
+        updateAccountRecord();
         updateCoursesRecord(course);
 
         return true;
@@ -173,7 +179,11 @@ import java.io.IOException;public class Account extends Person {
 
 	        while(origFileScanner.hasNext()) {
 	            line = origFileScanner.nextLine();
-	            if(line.contains((this.id))) {
+                String target = ","+this.id+",";
+                System.out.println("Target: "+ target);
+	            if(line.contains((target))) {
+                    System.out.println("*DEBUG* this.ID: " + this.id);
+                    System.out.println(line);
 	                //Get index of delimiters(",")
 	                ArrayList<Integer> indexArrayList = new ArrayList<Integer>();
 
@@ -193,7 +203,7 @@ import java.io.IOException;public class Account extends Person {
 
 
 	                for (int i = 0; i < registeredCourses.size(); i++) {
-	                    origString += registeredCourses.get(i).getCourseID() + ",";
+	                    origString += this.registeredCourses.get(i).getCourseID() + ",";
 	                }
 
 	                try {
@@ -240,9 +250,22 @@ import java.io.IOException;public class Account extends Person {
     private void updateCoursesRecord(Course course)
     {
         //re-print this course record in Courses.txt. The numEnrolled value will be updated.
+        File originalFile = null;
+        Scanner origFileScanner = null;
+        BufferedWriter out = null;
+        String delimiter = null;
+        String line = null;
+        int delimiterLength = 0;
+
+
+
+
+
+
+
 
         //Open the current Courses.txt.
-        File originalFile = new File("Courses.txt");
+        originalFile = new File("Courses.txt");
         try
         {
             origFileScanner = new Scanner(originalFile,"UTF-8");
@@ -266,7 +289,7 @@ import java.io.IOException;public class Account extends Person {
             System.out.println("File Not Found."); //this doesn't make sense????
         }
 
-        String line = null;
+        line = null;
         while (origFileScanner.hasNext())
         {
             line = origFileScanner.nextLine();
@@ -341,6 +364,8 @@ import java.io.IOException;public class Account extends Person {
 
         //Rename tempFile to originalFile
         tempFile.renameTo(originalFile);
+        
+    }
 
 
 

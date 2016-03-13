@@ -1,6 +1,6 @@
 import java.util.Vector;
 
-public class Course {
+public class Course implements Comparable<Course> {
     
     //Private Instance Variables
     private String courseName;
@@ -128,6 +128,13 @@ public class Course {
     {
         this.numEnrolled -= 1;
     }
+    /*
+    CompareTo override for sorting by Course Name
+    */
+    public int compareTo(Course course)
+    {
+        return (this.courseName.compareTo(course.getCourseName()));
+    }
     
     /*
     -This method returns Course data as a String.
@@ -136,13 +143,13 @@ public class Course {
     */
     public String toString()
     {
-        String result = "Course Name= " + getCourseName() + "\n"
-                        + "Course ID= " + getCourseID() + "\n"
-                        + "Start Date= " + getStartDate() + "\n"
-                        + "End Date= " + getEndDate() + "\n"
-                        + "Enrollment Limit= " + Integer.toString(getEnrollmentLimit()) + "\n"
-                        + "Number Enrolled= " + Integer.toString(getNumEnrolled()) + "\n"
-                        + "Description= " + getDescription() + "\n";
+        String result = getCourseName().toUpperCase() + "\n"
+                        + "Course ID: " + getCourseID() + "\n"
+                        + "Start Date: " + getStartDate() + "\n"
+                        + "End Date: " + getEndDate() + "\n"
+                        + "Enrollment Limit: " + Integer.toString(getEnrollmentLimit()) + "\n"
+                        + "Number Enrolled: " + Integer.toString(getNumEnrolled()) + "\n"
+                        + "Description: " + getDescription() + "\n";
                         
         return result;
     }
