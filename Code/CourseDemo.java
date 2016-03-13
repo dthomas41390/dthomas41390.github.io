@@ -32,12 +32,12 @@ public class CourseDemo
 	    	   courseAttributes[6]); 
 	    	   
            courseData.add(courseTemp);
-           System.out.println(courseTemp.toString());
+           //System.out.println(courseTemp.toString());
   
 	}
 		
 		for (Course course: courseData) {
-			System.out.println(course.toString());
+			//System.out.println(course.toString());
 	}
 		
 	    fileScanner.close(); 
