@@ -330,6 +330,7 @@ import java.io.IOException;public class Account extends Person {
         try
         {
             out.close();
+            origFileScanner.close();
         }
         catch (IOException e)
         {
