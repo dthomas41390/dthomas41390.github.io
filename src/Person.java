@@ -1,13 +1,13 @@
 public class Person implements Comparable<Person> {
-    
+
     //Private Instance Variables
     private String firstName;
     private String lastName;
     private int age;
     private String gender;
     private String socialSecurityNumber;
-    
-    
+
+
     //Constructor with parameters
     public Person(String firstName,
                   String lastName,
@@ -21,39 +21,39 @@ public class Person implements Comparable<Person> {
         this.gender = gender;
         this.socialSecurityNumber = socialSecurityNumber;
     }
-    
+
     //Set methods
     public void setFirstName(String firstName)
     {
         this.firstName = firstName;
     }
-    
+
     public void setLastName(String lastName)
     {
         this.lastName = lastName;
     }
-    
+
     public void setAge(int age)
     {
         this.age = age;
     }
-    
+
     public void setGender(String gender)
     {
         this.gender = gender;
     }
-    
+
     public void setSocialSecurityNumber(String ssn)
     {
         this.socialSecurityNumber = ssn;
     }
-    
+
     //Get methods
     public String getFirstName()
     {
         return this.firstName;
     }
-    
+
     public String getLastName()
     {
         return this.lastName;
@@ -68,47 +68,43 @@ public class Person implements Comparable<Person> {
     {
         return this.age;
     }
-    
+
     public String getGender()
     {
         return this.gender;
     }
-    
+
     public String getSocialSecurityNumber()
     {
-        String firstDigits = this.socialSecurityNumber.substring(0,3);
-        String middleDigts = this.socialSecurityNumber.substring(3,5);
-        String lastDigits = this.socialSecurityNumber.substring(5,9);
-        String result = firstDigits + " - " + middleDigts + " - " + lastDigits;
-        return result;
+        return this.socialSecurityNumber;
     }
-    
+
     public void talk()
     {
         System.out.println("Why hello there! How are you doing on this fine day?");
     }
-    
-    
+
+
     //CompareTo override for sorting by Last Name
     public int compareTo(Person person)
     {
         return (this.lastName.compareTo(person.getLastName()));
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     //Print out all private instance variable values
     public String toString()
     {
-        String result = "First Name= " + getFirstName() + "\n" 
-                        + "Last Name= " + getLastName() + "\n"
-                        + "Age= " + getAge() + "\n"
-                        + "Gender= " + getGender() + "\n" 
-                        + "SSN= " + getSocialSecurityNumber() + "\n";
-                        
+        String result = "   First Name: " + getFirstName() + "\n" +
+                        "    Last Name: " + getLastName() + "\n" +
+                        "          Age: " + getAge() + "\n" +
+                        "       Gender: " + getGender() + "\n" +
+                        "          SSN: " + getSocialSecurityNumber() + "\n";
+
         return result;
     }
-    
+
 }

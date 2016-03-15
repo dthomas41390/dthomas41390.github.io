@@ -3,7 +3,11 @@ import java.util.Scanner;
 import java.lang.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.InputMismatchException;
+import java.io.FileNotFoundException;
 
 public class Application {
 
@@ -13,6 +17,12 @@ public class Application {
     private Account activeUser;
     private Scanner scanner;
     private Scanner lineScanner;
+    private Scanner in = new Scanner(System.in);
+    private boolean isLoginScreenActive = false;
+    private boolean isCreateAccountScreenActive = false;
+    private boolean isCourseRegistrationScreenActive = false;
+    private boolean isProfileScreenActive = false;
+    private boolean isNavigationOptionsScreenActive = false;
 
     /*
     This main Constructor acts as an "initialization" of the entire application. It will initialize the data by calling the
@@ -20,11 +30,48 @@ public class Application {
     */
     public Application()
     {
+        this.clearScreen();
         this.loadCoursesData();
         this.loadAccountsData();
-        this.displayLoginScreen(); //Prints out the Login Screen for Logging In or Creating a New Account
 
     }
+    //runs the application and takes in user input.
+    public void run()
+    {
+        this.isLoginScreenActive = true; //show Login Screen on startup.
+        while (true)
+        {
+            if (isLoginScreenActive)
+            {
+                this.displayLoginScreen(); //Prints out the Login Screen for Logging In or Creating a New Account
+                this.isLoginScreenActive = false;
+            }
+            else if (isCreateAccountScreenActive)
+            {
+                this.displayCreateAccountScreen();
+                this.isCreateAccountScreenActive = false;
+            }
+            else if (isCourseRegistrationScreenActive)
+            {
+                this.displayCourseRegistrationScreen();
+                this.isCourseRegistrationScreenActive = false;
+            }
+            else if (isProfileScreenActive)
+            {
+                this.displayProfileScreen();
+                this.isProfileScreenActive = false;;
+            }
+            else if (isNavigationOptionsScreenActive)
+            {
+                this.displayNavigationOptionsScreen();
+                this.isNavigationOptionsScreenActive = false;
+            }
+            
+        }
+        
+    }
+
+
 
 
     /*
@@ -45,7 +92,58 @@ public class Application {
     */
     private void loadCoursesData()
     {
-        //stub
+        File courseFile;  
+        Scanner fileScanner;  
+        Course courseTemp; 
+            
+        try 
+        {
+            
+            courseFile = new File("Courses.txt"); 
+            fileScanner = new Scanner(courseFile, "UTF-8"); 
+            fileScanner.useDelimiter("\",\"");
+                                                    
+            while(fileScanner.hasNextLine()) 
+            { 
+                String[] courseAttributes = fileScanner.nextLine().split("\",\""); 
+                
+            courseTemp = new Course(courseAttributes[0].trim(), courseAttributes[1], 
+                    courseAttributes[2], 
+                    courseAttributes[3],
+                new Integer(courseAttributes[4]).intValue(), 
+                new Integer(courseAttributes[5]).intValue(), 
+                courseAttributes[6]); 
+                
+            this.courseList.add(courseTemp);
+    
+            }
+        
+            fileScanner.close(); 
+        
+        } 
+        catch(FileNotFoundException e) 
+        {  
+            e.printStackTrace();
+        } 
+        catch(Exception e) 
+        {
+            e.printStackTrace();
+        }
+        
+        //Sort courseList
+        Collections.sort(this.courseList);
+        
+        /* DEBUG
+        System.out.println("courseList Size: " + this.courseList.size());
+        
+        for (Course course: this.courseList)
+        {
+            System.out.println(course.getCourseName());
+        }
+        */
+
+
+          
     }
 
     /*
@@ -145,9 +243,9 @@ public class Application {
         will add the new Account will be added as a new entry to AccountRecords.txt.
     -ASSIGNEE: Dave
     */
-    private void createAccount(String firstName,
+    private boolean createAccount(String firstName,
                                String lastName,
-                               int age,
+                               String age,
                                String gender,
                                String socialSecurityNumber,
                                String userName,
@@ -155,7 +253,67 @@ public class Application {
                                String studentID)
 
     {
-        //Stub
+        //Validate that studentID does not already exist
+        //System.out.println("start validation....");
+        for (Account account: accountList)
+        {
+            // System.out.println("AccountID: " + account.getID());
+            // System.out.println("InputID: " + studentID);
+            if (account.getID().equals(studentID))
+            {
+                System.out.println("\n");
+                
+                return false;
+            }
+        }
+        
+        //Create New Account
+        Account newAccount = new Account(firstName,
+                                         lastName,
+                                         Integer.parseInt(age),
+                                         gender,
+                                         socialSecurityNumber,
+                                         userName,
+                                         password,
+                                         studentID);
+                                         
+        //add new account to accountList
+        this.accountList.add(newAccount);
+        
+        //Add new Account to AccountRecords.txt
+        FileWriter fw = null;;
+        try
+        {
+            File accountsFile = new File("AccountRecords.txt");
+            
+            fw = new FileWriter(accountsFile,true);
+            String newAccountRecordEntry = newAccount.getFirstName() + ","
+                                           + newAccount.getLastName() + ","
+                                           + newAccount.getAge() + ","
+                                           + newAccount.getGender() + ","
+                                           + newAccount.getSocialSecurityNumber() + ","
+                                           + newAccount.getUserName() + ","
+                                           + newAccount.getPassword() + ","
+                                           + newAccount.getID() + ",";
+                                           
+            fw.write(newAccountRecordEntry + "\r\n");
+            fw.flush();
+        }
+        catch (IOException e)
+        {
+            System.out.println("IO Exception");
+        }
+        
+        try
+        {
+            fw.close();
+        }
+        catch (IOException e)
+        {
+            System.out.println("IO Exception");
+        }
+        
+        return true;
     }
 
     /*
@@ -166,8 +324,17 @@ public class Application {
     */
     private boolean loginUser(String userName, String password)
     {
-        //stub
-    }
+        for (Account account: this.accountList)
+        {
+            if (account.getUserName().equals(userName) && account.getPassword().equals(password))
+            {
+                this.activeUser = account;
+                return true;
+            } 
+        }
+        
+        return false; //no match for username/password pair.
+    }    
 
     /*
     -This private utility method attempts to register a Course for the user. Based on the courseID provided, this method will call the
@@ -225,16 +392,7 @@ public class Application {
         }
 
         //Call removeCourse() from Account class and return success or failure.
-        boolean isSuccess = this.activeUser.removeCourse(selectedCourse);
-
-        if (isSuccess)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return this.activeUser.removeCourse(selectedCourse);
     }
 
     /*
@@ -255,7 +413,86 @@ public class Application {
     */
     private void displayLoginScreen()
     {
-        //stub
+        
+        //Ask User if existing user. Validate that the command is correct.
+        boolean validCommand = false;
+        String userInput = "";
+        while (!validCommand)
+        {
+            //Opening statement
+            System.out.println("Navigation Options: \n");
+            System.out.println("       1 Login");
+            System.out.println("       2 Create New Account");
+            System.out.println("       3 Quit Application\n\n");
+            System.out.print("Enter Your Option (1, 2, 3): ");
+            userInput = in.next();
+            userInput = userInput.toUpperCase();
+            
+            
+            if (userInput.equals("1") || userInput.equals("2") || userInput.equals("3"))
+            {
+                validCommand = true;
+            }
+            else
+            {
+                System.out.println("ERROR: INVALID COMMAND. Please try again.");
+            }
+            
+        }
+        
+        
+        
+        if (userInput.equals("1"))
+        {
+            //Read in userName and password for the existing user and validate. If after three tries the user is incorrect,
+            //the user will be redirected the Create Account Screen.
+            validCommand = false; //set to false
+            int failedAttempts = 0;
+            while (!validCommand)
+            {
+        	    System.out.println("Please enter your Username: ");
+        	    String userNameInput = in.next();
+        	    System.out.println("Please enter your Password: ");
+        	    String passwordInput = in.next();
+                
+                boolean isLoginSuccessful = loginUser(userNameInput,passwordInput);
+                if (isLoginSuccessful)
+                {
+                    
+                    System.out.print("\033[H\033[2J"); //clear screen
+                    System.out.flush();
+                    System.out.println("Login Successful! \n");
+
+                    validCommand = true;
+                    this.isNavigationOptionsScreenActive = true;
+                }
+                else if (!isLoginSuccessful && failedAttempts < 3) //isLoginSuccessful == false
+                {
+                    System.out.println("Invalid Username/Password pair. Please try again.");
+                    failedAttempts++;
+                }
+                else //Three straight failed attempts.
+                {
+                    this.clearScreen();
+                    System.out.println("ERROR: Consecutive failed attempts. Navigating to Create Account Screen.");
+                    validCommand = true;
+                    this.isCreateAccountScreenActive = true;
+                }
+            }
+             
+        }
+        else if (userInput.equals("2"))
+        {
+            //navigate the user to Create Account Screen.
+            this.isCreateAccountScreenActive = true;
+        }
+        else //userInputs.equals("3") is true.
+        {
+            this.quitApplication();
+        }
+        
+        //in.close(); //close scanner used for user input.
+        
     }
 
     /*
@@ -266,7 +503,183 @@ public class Application {
     */
     private void displayCreateAccountScreen()
     {
-        //stub
+        boolean validCommand = false;
+        int failedAttempts = 0;
+        String userNameInput = null;;
+        String passwordInput = null;;
+        String firstNameInput = null;;
+        String lastNameInput = null;;
+        String ageInput = null;;
+        String genderInput = null;;
+        String socialSecurityNumberInput = null;;
+        String studentIDInput = null;
+
+        while (!validCommand)
+        {            
+            System.out.println("Create New Account \n");
+            
+            try
+            {
+                boolean validDataFormat = false;
+
+                //username
+                System.out.println("UserName: ");
+                userNameInput = in.next();
+                
+                //password
+                System.out.println("Password: ");
+                passwordInput = in.next();
+                
+                //first name
+                System.out.println("First Name: ");
+                firstNameInput = in.next();
+                
+                //last name
+                System.out.println("Last Name: ");
+                lastNameInput = in.next();
+                
+                
+                while (!validDataFormat)
+                {
+                    //age
+                    System.out.println("Age: ");
+                    ageInput = in.next();
+                    
+                    //Validate age is an INT
+                    try
+                    {
+                        int ageValidated = Integer.parseInt(ageInput);
+                        validDataFormat = true;    
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        System.out.println("Invalid Age input. Must be a number. Try again.");
+                    }
+                }
+                
+                
+                validDataFormat = false;
+                while (!validDataFormat)
+                {
+                    //gender
+                    System.out.println("Gender (M/F): ");
+                    genderInput = in.next();
+                    //Validate gender is M or F
+                    if (!genderInput.toUpperCase().equals("M") && !genderInput.toUpperCase().equals("F"))
+                    {
+                        System.out.println("Invalid Gender Input. Try again.");
+                    }
+                    else //valid data
+                    {
+                        validDataFormat = true;
+                    }
+                }
+                
+                validDataFormat = false;
+                while (!validDataFormat)
+                {
+                    //SSN
+                    System.out.println("Social Security Number (XXXXXXXXX): ");
+                    socialSecurityNumberInput = in.next();
+                    
+                    //Validate SSN format
+                    if (String.valueOf(socialSecurityNumberInput).length() == 9)
+                    {
+                        try
+                        {
+                            int ssnValidated = Integer.parseInt(socialSecurityNumberInput);
+                            validDataFormat = true;
+                        }
+                        catch (NumberFormatException e)
+                        {
+                            System.out.println("Invalid SSN Input. Must be a number of the format XXXXXXXXX. Try again.");
+                        }
+                    }
+                    else
+                    {
+                        System.out.println("Invalid SSN Input. Must be a number of the format XXXXXXXXX. Try again.");
+                    }
+                }
+                
+                
+                validDataFormat = false;
+                while (!validDataFormat)
+                {
+                    //Student ID
+                    System.out.println("Student ID (XXXXX): ");
+                    studentIDInput = in.next();
+                    
+                    //Validate Student ID
+                    if (String.valueOf(studentIDInput).length() == 5)
+                    {
+                        try
+                        {
+                            int studentIDValidated = Integer.parseInt(studentIDInput);
+                            validDataFormat = true;
+                        }
+                        catch (NumberFormatException e)
+                        {
+                            System.out.println("Invalid Student ID Input. Must be a number of the format XXXXX. Try again.");
+                        }
+                    }
+                    else
+                    {
+                        System.out.println("Invalid Student ID Input. Must be a number of the format XXXXX. Try again.");
+                    }
+                }
+                
+            
+            
+            }
+            catch (InputMismatchException e)
+            {
+                System.out.println("Input Mismatch Exception");
+            }
+                                    
+            //Attempt to create account
+            boolean isAccountCreationSuccessful = this.createAccount(firstNameInput,
+                                                                lastNameInput,
+                                                                ageInput,
+                                                                genderInput,
+                                                                socialSecurityNumberInput,
+                                                                userNameInput,
+                                                                passwordInput,
+                                                                studentIDInput);
+                                             
+            if (isAccountCreationSuccessful)
+            {
+                this.clearScreen();
+                
+                System.out.println("\n Account Creation Successful!");
+                validCommand = true;
+                this.isLoginScreenActive = true;
+            }
+            else if (!isAccountCreationSuccessful && failedAttempts < 2)
+            {
+                this.clearScreen();
+                
+                System.out.println("Student ID already exists. Please try again");
+                failedAttempts++;
+            }
+            else //three straight failed attempts
+            {
+                this.clearScreen();
+                
+                System.out.println("ERROR: Consecutive failed attempts. Redirecting to Login Screen");
+                validCommand = true;
+                this.isLoginScreenActive = true;
+                
+            }
+            
+
+           
+        }
+        
+
+        
+        //in.close();
+        
+        
     }
 
     /*
@@ -280,12 +693,60 @@ public class Application {
     */
     private void displayCourseRegistrationScreen()
     {
-        //stub
-    }
+		System.out.println("\n");
+
+        /*
+        -Neater Course List
+        */
+        for (Course course: this.courseList)
+        {
+            System.out.println(course.toString() + "\n");
+        }
+
+		// for(Course course: courseList) {
+		// 	System.out.println(course.getCourseName() + " " + course.getCourseID() + "      " + course.getStartDate() + "    " +
+		// 					   course.getEndDate() + "  " + course.getEnrollmentLimit() +  "        " + course.getNumEnrolled());
+		// }
+
+
+        System.out.println();
+        System.out.println("       1 Register For a Course");
+        System.out.println("       2 Show Navigation Options\n");
+        System.out.print("Enter Your Option (1, 2): ");
+
+
+		boolean validCommand = false;
+		String userInput = "";
+
+		while (validCommand == false)
+		{
+			userInput = in.next();
+		 	if (userInput.equals("1") || userInput.equals("2"))
+		 		{ validCommand = true; }
+		 	else
+		 		{ System.out.print("Invalid Option, please try again: "); }
+		}
+        
+        if (userInput.equals("1"))
+        {
+            System.out.print("\n\nPlease enter a Course ID (XXXX): ");
+            String courseID = in.next();
+            this.clearScreen();
+
+            //return true, registration was successful. Otherwise, return false.
+            boolean registeringCourse = registerCourse(courseID);
+            displayCourseRegistrationStatusScreen(registeringCourse);
+        }
+        else //userInput.equals("2") is true
+        {
+            this.clearScreen();
+            this.isNavigationOptionsScreenActive = true;
+        }
+	}
 
     /*
-    -This private utility method will display the "Course Registration Status" screen which informs the user if a registration or
-    unregistration is successful or if it failed.
+    -This private utility method will display the "Course Registration Status" screen which informs the user if a registration is
+    successful or if it failed.
     -After the message is displayed to the user, the user must "Enter any Key" to confirm. Then the user is displayed with navigation options.
         -1 Course Registration
         -2 Profile
@@ -295,10 +756,62 @@ public class Application {
     -If the user selects "3" then display the Login Screen.
     -ASSIGNEE: Alberto
     */
-    private void displayCourseRegistrationStatusScreen()
+    private void displayCourseRegistrationStatusScreen(boolean registeringCourse)
     {
-        //stub
+        
+        this.clearScreen();
+
+        
+		if (registeringCourse) {
+			System.out.println("\n\n");
+			System.out.println("       --------------------------------         ");
+			System.out.println("   *** YOUR REGISTRATION WAS SUCCESSFUL   ***   ");
+		    System.out.println("       --------------------------------         ");
+		}
+		else {
+			System.out.println("\n\n");
+		    System.out.println("       ------------------------------------         ");
+		    System.out.println("   *** YOUR REGISTRATION WAS NOT SUCCESSFUL   ***   ");
+		    System.out.println("       ------------------------------------         ");
+		}
+        
+        isNavigationOptionsScreenActive = true;
+        
+
     }
+
+    /*
+    -This private utility method will display the "Course UnRegistration Status" screen which informs the user if an unregistration is
+    successful or if it failed.
+    -After the message is displayed to the user, the user must "Enter any Key" to confirm. Then the user is displayed with navigation options.
+        -1 Course Registration
+        -2 Profile
+        -3 Logout
+    -If the user selects "1" then display the Course Registration Screen.
+    -If the user selects "2" then display the Profile Screen.
+    -If the user selects "3" then display the Login Screen.
+    -ASSIGNEE: Alberto
+    */
+	private void displayCourseUnRegistrationStatusScreen(boolean unRegisteringCourse){
+        this.clearScreen();
+        
+        if (unRegisteringCourse) {
+			System.out.println("\n\n");
+			System.out.println("       -----------------------------------         ");
+			System.out.println("   *** YOUR UN-REGISTRATION WAS SUCCESSFUL   ***   ");
+			System.out.println("       -----------------------------------         ");
+		}
+		else {
+			System.out.println("\n\n");
+			System.out.println("       ------------------------------------         ");
+			System.out.println("   *** YOUR UN-REGISTRATION WAS NOT SUCCESSFUL   ***   ");
+			System.out.println("       ------------------------------------         ");
+		}
+        
+        isNavigationOptionsScreenActive = true;
+        
+
+	}
 
     /*
     -This private utility method will display the this.activeUser Profile Screen.
@@ -312,9 +825,136 @@ public class Application {
     */
     private void displayProfileScreen()
     {
-        //stub
+        //Scanner in = new Scanner(System.in);
+        
+		System.out.println();
+		System.out.println("   STUDENT RECORD: ");
+		System.out.println("   --------------- ");
+		System.out.println(activeUser.toString());
+		System.out.println("   Student ID: " + this.activeUser.getID() + "\n");
+
+		ArrayList<Course> registeredCourses = activeUser.getRegisteredCourses();
+
+		System.out.println("   REGISTERED IN THE FOLLOWING COURSE(S):");
+		System.out.println("   --------------------------------------");
+
+		for(Course course: registeredCourses) {
+			System.out.println("   Course Name: " + course.getCourseName() + "    Course ID: " + course.getCourseID());
+			System.out.println("          Start Date: " + course.getStartDate() +
+							   "    End Date: " + course.getEndDate() + "    Capacity: " + course.getEnrollmentLimit() +
+							   "    Enrolled: " + course.getNumEnrolled());
+			System.out.println("         Description: " + course.getDescription() + "\n");
+		}
+			System.out.println();
+			System.out.println("       1 Unregister For a Course");
+			System.out.println("       2 Go Back to Course Registration\n");
+			System.out.print("Enter Your Option (1, 2): ");
+
+		boolean validCommand = false;
+		String userInput = "";
+
+		while (validCommand == false)
+		{
+			userInput = in.next();
+		 	if (userInput.equals("1") || userInput.equals("2"))
+		 		{ validCommand = true; }
+		 	else
+		 		{ System.out.print("Invalid Option, please try again: "); }
+		}
+
+		int userIn = Integer.valueOf((String) userInput);
+
+	 	if (userIn == 2) {
+			this.clearScreen();
+		 	this.isCourseRegistrationScreenActive = true;
+		}
+
+		if (userIn == 1) {
+			System.out.print("\nPlease Enter Course ID (XXXX): ");
+		    String courseID = in.next();
+            
+            this.clearScreen();
+
+			System.out.println();
+			System.out.println("   STUDENT RECORD: ");
+			System.out.println("   --------------- ");
+			System.out.println(activeUser.toString());
+			System.out.println("   Student ID: " + activeUser.getID() + "\n");
+
+		 	boolean unRegisteringCourse = unRegisterCourse(courseID);
+			displayCourseUnRegistrationStatusScreen(unRegisteringCourse);
+		}
     }
+    /*
+    -Display the Navigation Options Screen to the user with Options 1-3.
+    */
+    private void displayNavigationOptionsScreen()
+    {
+        System.out.println("\n\n");
+        System.out.println("Navigation Options: \n");
+        System.out.println("       1 Course Registration");
+        System.out.println("       2 Profile");
+        System.out.println("       3 Logout");
+        System.out.println("       4 Quit Application\n\n");
+        System.out.print("Enter Your Option (1, 2, 3, 4): ");
 
+        boolean validCommand = false;
+        String userInput = "";
 
+        while (validCommand == false)
+        {
+            userInput = in.next();
+            if (userInput.equals("1") || userInput.equals("2") || userInput.equals("3") || userInput.equals("4"))
+                { validCommand = true; }
+            else
+                { System.out.print("Invalid Option, please try again: "); }
+        }
+
+        int userIn = Integer.valueOf((String) userInput);
+
+        if (userIn == 1) {
+            this.clearScreen();
+            this.isCourseRegistrationScreenActive = true;
+        }
+
+        if (userIn == 2) {
+            this.clearScreen();
+            this.isProfileScreenActive = true;
+        }
+
+        if (userIn == 3) {
+            this.clearScreen();
+            System.out.println(this.activeUser.getUserName() + " was logged out.");
+            this.isLoginScreenActive = true;
+        }
+        
+        if (userIn == 4) {
+            this.quitApplication();
+        }
+    }
+    
+    /*
+    -Clears previous screen
+    */
+    private void clearScreen()
+    {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+    
+    /*
+    -Quit application
+    */
+    private void quitApplication()
+    {
+        //Close in Scanner
+        in.close();
+        
+        this.clearScreen();
+        System.out.println("Goodbye!");
+        System.exit(0);
+        
+        
+    }
 
 }
