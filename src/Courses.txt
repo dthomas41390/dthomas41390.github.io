@@ -1,4 +1,4 @@
-﻿Programming For Beginners","1235","1/1/16","5/15/16","10","0","This class introduces the first steps to learning programming.","
+Programming For Beginners","1235","1/1/16","5/15/16","10","0","This class introduces the first steps to learning programming.","
 Intro to Biology","1263","1/1/16","5/15/16","10","0","This class goes over basic cell structures.","
 Flight Mechanics","1258","1/1/16","5/15/16","10","0","This class discusses history of flight and how its fundamental mechanics were derived.","
 Human Gross Anatomy","1260","1/1/16","5/15/16","10","0","Study and dissection of the human body.","
